@@ -63,7 +63,7 @@ public class App {
     private static final String BOT_TOKEN = env("BOT_TOKEN", "");
     private static final boolean DISABLE_ARGO = envBool("DISABLE_ARGO", false);
     private static final boolean SHOW_LOG = !List.of("false", "disable", "no").contains(env("SHOW_LOG", "true").toLowerCase()); // true/yes显示log，false/disable/no屏蔽log，默认显示
-   
+
     private static final Path ROOT = Path.of("").toAbsolutePath();
     private static final Path RUNTIME_DIR = ROOT.resolve(FILE_PATH).normalize();
     private static final Path SING_BOX_CONFIG_PATH = RUNTIME_DIR.resolve("config.json");
@@ -157,7 +157,6 @@ public class App {
             sleep(45000);
             cleanupFiles(true);
             clearConsole();
-           // System.out.println("App is running");
         }, "delayed-cleanup");
         cleanupThread.setDaemon(true);
         cleanupThread.start();
@@ -369,41 +368,12 @@ public class App {
             ));
         }
 
-        List<Object> ruleSet = new ArrayList<>();
-        ruleSet.add(mapOf("tag", "netflix", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.srs"));
-        ruleSet.add(mapOf("tag", "openai", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.srs"));
-        List<Object> wireguardRuleSets = new ArrayList<>(listOf("netflix"));
-        if (needsYoutubeWarp()) {
-            ruleSet.add(mapOf("tag", "youtube", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.srs"));
-            wireguardRuleSets.add("youtube");
-            log("Add YouTube outbound rule");
-        }
-
-        List<Object> endpoints = listOf(mapOf(
-                "type", "wireguard",
-                "tag", "wireguard-out",
-                "mtu", 1280,
-                "address", listOf("172.16.0.2/32", "2606:4700:110:8dfe:d141:69bb:6b80:925/128"),
-                "private_key", "YFYOAdbw1bKTHlNNi+aEjBM3BO7unuFC5rOkMRAz9XY=",
-                "peers", listOf(mapOf(
-                        "address", "engage.cloudflareclient.com",
-                        "port", 2408,
-                        "public_key", "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-                        "allowed_ips", listOf("0.0.0.0/0", "::/0"),
-                        "reserved", listOf(78, 135, 76)
-                ))
-        ));
-
         return mapOf(
-                "log", mapOf("disabled", true, "level", "error", "timestamp", true),
-                "http_clients", listOf(mapOf("tag", "http-client-direct")),
+                "log", mapOf("disabled", false, "level", "info", "timestamp", true),
                 "inbounds", inbounds,
-                "endpoints", endpoints,
                 "outbounds", listOf(mapOf("type", "direct", "tag", "direct")),
                 "route", mapOf(
-                        "default_http_client", "http-client-direct",
-                        "rule_set", ruleSet,
-                        "rules", listOf(mapOf("rule_set", wireguardRuleSets, "outbound", "wireguard-out")),
+                        "default_domain_resolver", mapOf("strategy", "prefer_ipv4"),
                         "final", "direct"
                 )
         );
