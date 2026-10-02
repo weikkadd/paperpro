@@ -56,7 +56,7 @@ public class App {
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
     private static final String REALITY_PORT = env("REALITY_PORT", "7001");
-    private static final String CFIP = env("CFIP", "cf.877774.xyz");
+    private static final String CFIP = env("CFIP", ""); // 空 => vmess 的 add 直接用 ARGO_DOMAIN（直连 CF 官方IP，最稳）；设为共享CDN域名(如 cf.877774.xyz)可防污染
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
     private static final String CHAT_ID = env("CHAT_ID", "");  // 如果关闭了log输出,请填写tg推送，否则找不到节点
@@ -591,8 +591,11 @@ public class App {
 
         List<String> nodes = new ArrayList<>();
         if (!DISABLE_ARGO && argoDomain != null && !argoDomain.isEmpty()) {
+            // CFIP 为空时，vmess 直接连 Argo 域名（add/sni/host 一致，最稳）；
+            // 设了 CFIP（第三方共享CDN域名）则用 CFIP 防污染，但要求该 CDN 仍有效
+            String vmessAdd = CFIP.isEmpty() ? argoDomain : CFIP;
             Map<String, Object> vmess = mapOf(
-                    "v", "2", "ps", nodeName, "add", CFIP, "port", CFPORT, "id", UUID,
+                    "v", "2", "ps", nodeName, "add", vmessAdd, "port", CFPORT, "id", UUID,
                     "aid", "0", "scy", "auto", "net", "ws", "type", "none",
                     "host", argoDomain, "path", "/vmess-argo?ed=2560", "tls", "tls",
                     "sni", argoDomain, "alpn", "", "fp", "firefox"
