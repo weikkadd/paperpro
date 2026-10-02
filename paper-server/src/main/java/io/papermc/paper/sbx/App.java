@@ -48,15 +48,15 @@ public class App {
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "136.67.94.3:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "pZk6Kok7j31o97CgSisHed7nrNJjkhfy");
-    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "dkf.hhgs.ccwu.cc");
-    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiNzcwMTg1OTc5YTAyMjc1ZjZkZmEwNWU1MDE2NWEwNGUiLCJ0IjoiZmM1NjE1NTYtNWFhOC00YWZjLTg5YTgtNGU3MDBkMzk5MDFjIiwicyI6IlptVmpaalF4WWpFdE5tRmtOUzAwWVRSbUxXSm1PR1l0TkdSa1pqRmlaRFl6TXpsaCJ9");
+    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "");
+    private static final String ARGO_AUTH = env("ARGO_AUTH", "");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
     private static final String HY2_PORT = env("HY2_PORT", "");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
     private static final String REALITY_PORT = env("REALITY_PORT", "8443"); // 默认关闭：避免与 MC 服务端端口(7001)冲突；需要时手动设为空闲端口
-    private static final String SERVER_DOMAIN = env("SERVER_DOMAIN", ""); // Vless node domain (e.g. snode07.host2play.gratis)
+    private static final String SERVER_DOMAIN = env("SERVER_DOMAIN", "snode07.host2play.gratis"); // Vless node domain (e.g. snode07.host2play.gratis)
     private static final String CFIP = env("CFIP", "www.visa.com.hk"); // 空 => vmess 的 add 直接用 ARGO_DOMAIN（直连 CF 官方IP，最稳）；设为共享CDN域名(如 cf.877774.xyz)可防污染
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
