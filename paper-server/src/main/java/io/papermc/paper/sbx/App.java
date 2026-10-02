@@ -243,7 +243,7 @@ public class App {
                     "  - hostname: " + ARGO_DOMAIN + "\n" +
                     "    service: http://localhost:" + ARGO_PORT + "\n" +
                     "    originRequest:\n" +
-                    "    noTLSVerify: true\n" +
+                    "      noTLSVerify: true\n" +
                     "  - service: http_status:404\n";
             Files.writeString(RUNTIME_DIR.resolve("tunnel.yml"), yaml, StandardCharsets.UTF_8);
         } else {
