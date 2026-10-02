@@ -373,7 +373,7 @@ public class App {
                 "inbounds", inbounds,
                 "outbounds", listOf(mapOf("type", "direct", "tag", "direct")),
                 "route", mapOf(
-                        "default_domain_resolver", mapOf("strategy", "prefer_ipv4"),
+                        "default_domain_resolver", mapOf("server", "https://1.1.1.1/dns-query", "strategy", "prefer_ipv4"),
                         "final", "direct"
                 )
         );
