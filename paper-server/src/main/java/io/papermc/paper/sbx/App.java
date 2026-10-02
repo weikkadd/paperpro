@@ -432,9 +432,7 @@ public class App {
 
     private static String nezhaV0Payload() {
         List<Object> args = new ArrayList<>(listOf("-s", NEZHA_SERVER + ":" + NEZHA_PORT, "-p", NEZHA_KEY, "--disable-auto-update", "--report-delay", "4", "--skip-conn", "--skip-procs"));
-        if (List.of("443", "8443", "2096", "2087", "2083", "2053").contains(NEZHA_PORT)) {
-            args.add("--tls");
-        }
+        // TLS disabled: 136.67.94.3:443 is plaintext, not TLS
         return toJson(mapOf("args", args));
     }
 
@@ -456,7 +454,7 @@ public class App {
                 "skip_connection_count: true\n" +
                 "skip_procs_count: true\n" +
                 "temperature: false\n" +
-                "tls: " + tls + "\n" +
+                "tls: false\n" +
                 "use_gitee_to_upgrade: false\n" +
                 "use_ipv6_country_code: false\n" +
                 "uuid: " + UUID;
