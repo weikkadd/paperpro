@@ -56,6 +56,7 @@ public class App {
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
     private static final String REALITY_PORT = env("REALITY_PORT", "7001");
+    private static final String DNS_SERVER = env("DNS_SERVER", "system"); // 默认 system：不指定外部DNS（容器常封锁1.1.1.1）。可改为 off/system 使用系统DNS，或指定DoH/UDP地址
     private static final String CFIP = env("CFIP", "cf.877774.xyz");
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
@@ -368,14 +369,17 @@ public class App {
             ));
         }
 
+        Map<String, Object> dnsBlock = switch (DNS_SERVER.toLowerCase()) {
+            case "off", "system", "" -> mapOf("final", "direct");
+            default -> mapOf(
+                    "default_domain_resolver", mapOf("server", DNS_SERVER, "strategy", "prefer_ipv4"),
+                    "final", "direct");
+        };
         return mapOf(
                 "log", mapOf("disabled", false, "level", "info", "timestamp", true),
                 "inbounds", inbounds,
                 "outbounds", listOf(mapOf("type", "direct", "tag", "direct")),
-                "route", mapOf(
-                        "default_domain_resolver", mapOf("server", "1.1.1.1:53", "strategy", "prefer_ipv4"),
-                        "final", "direct"
-                )
+                "route", dnsBlock
         );
     }
 
