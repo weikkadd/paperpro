@@ -56,6 +56,7 @@ public class App {
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
     private static final String REALITY_PORT = env("REALITY_PORT", "8443"); // 默认关闭：避免与 MC 服务端端口(7001)冲突；需要时手动设为空闲端口
+    private static final String SERVER_DOMAIN = env("SERVER_DOMAIN", ""); // Vless node domain (e.g. snode07.host2play.gratis)
     private static final String CFIP = env("CFIP", "www.visa.com.hk"); // 空 => vmess 的 add 直接用 ARGO_DOMAIN（直连 CF 官方IP，最稳）；设为共享CDN域名(如 cf.877774.xyz)可防污染
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
@@ -601,20 +602,20 @@ public class App {
             nodes.add("vmess://" + Base64.getEncoder().encodeToString(toJson(vmess).getBytes(StandardCharsets.UTF_8)));
         }
         if (isValidPort(TUIC_PORT)) {
-            nodes.add("tuic://" + UUID + ":" + UUID + "@" + serverIp + ":" + TUIC_PORT + "?sni=www.bing.com&congestion_control=bbr&udp_relay_mode=native&alpn=h3&allow_insecure=1#" + nodeName);
+            nodes.add("tuic://" + UUID + ":" + UUID + "@" + (SERVER_DOMAIN.isEmpty() ? serverIp : SERVER_DOMAIN) + ":" + TUIC_PORT + "?sni=www.bing.com&congestion_control=bbr&udp_relay_mode=native&alpn=h3&allow_insecure=1#" + nodeName);
         }
         if (isValidPort(HY2_PORT)) {
-            nodes.add("hysteria2://" + UUID + "@" + serverIp + ":" + HY2_PORT + "/?sni=www.bing.com&insecure=1&alpn=h3&obfs=none#" + nodeName);
+            nodes.add("hysteria2://" + UUID + "@" + (SERVER_DOMAIN.isEmpty() ? serverIp : SERVER_DOMAIN) + ":" + HY2_PORT + "/?sni=www.bing.com&insecure=1&alpn=h3&obfs=none#" + nodeName);
         }
         if (isValidPort(REALITY_PORT)) {
-            nodes.add("vless://" + UUID + "@" + serverIp + ":" + REALITY_PORT + "?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.iij.ad.jp&fp=firefox&pbk=" + publicKey + "&type=tcp&headerType=none#" + nodeName);
+            nodes.add("vless://" + UUID + "@" + (SERVER_DOMAIN.isEmpty() ? serverIp : SERVER_DOMAIN) + ":" + REALITY_PORT + "?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.iij.ad.jp&fp=firefox&pbk=" + publicKey + "&type=tcp&headerType=none#" + nodeName);
         }
         if (isValidPort(ANYTLS_PORT)) {
-            nodes.add("anytls://" + UUID + "@" + serverIp + ":" + ANYTLS_PORT + "?security=tls&sni=" + serverIp + "&fp=chrome&insecure=1&allowInsecure=1#" + nodeName);
+            nodes.add("anytls://" + UUID + "@" + (SERVER_DOMAIN.isEmpty() ? serverIp : SERVER_DOMAIN) + ":" + ANYTLS_PORT + "?security=tls&sni=" + serverIp + "&fp=chrome&insecure=1&allowInsecure=1#" + nodeName);
         }
         if (isValidPort(S5_PORT)) {
             String auth = Base64.getEncoder().encodeToString((UUID.substring(0, 8) + ":" + UUID.substring(UUID.length() - 12)).getBytes(StandardCharsets.UTF_8));
-            nodes.add("socks://" + auth + "@" + serverIp + ":" + S5_PORT + "#" + nodeName);
+            nodes.add("socks://" + auth + "@" + (SERVER_DOMAIN.isEmpty() ? serverIp : SERVER_DOMAIN) + ":" + S5_PORT + "#" + nodeName);
         }
 
         String subText = String.join("\n", nodes);
