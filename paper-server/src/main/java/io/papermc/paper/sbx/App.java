@@ -55,7 +55,7 @@ public class App {
     private static final String HY2_PORT = env("HY2_PORT", "");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
-    private static final String REALITY_PORT = env("REALITY_PORT", "7001"); // 默认关闭：避免与 MC 服务端端口(7001)冲突；需要时手动设为空闲端口
+    private static final String REALITY_PORT = env("REALITY_PORT", "8443"); // 默认关闭：避免与 MC 服务端端口(7001)冲突；需要时手动设为空闲端口
     private static final String CFIP = env("CFIP", "www.visa.com.hk"); // 空 => vmess 的 add 直接用 ARGO_DOMAIN（直连 CF 官方IP，最稳）；设为共享CDN域名(如 cf.877774.xyz)可防污染
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
