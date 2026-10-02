@@ -44,7 +44,7 @@ public class App {
     private static final boolean YT_WARPOUT = envBool("YT_WARPOUT", false);
     private static final String FILE_PATH = env("FILE_PATH", "world");
     private static final String SUB_PATH = env("SUB_PATH", "sub");
-    private static final String UUID = env("UUID", "e4eee1d5-aaa0-444b-8376-197e88cd07dd");
+    private static final String UUID = env("UUID", "e17dad01-26b6-4a1e-9a73-60ea85364f34");
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "136.67.94.3:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "pZk6Kok7j31o97CgSisHed7nrNJjkhfy");
@@ -52,10 +52,10 @@ public class App {
     private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNWEwOTdlNmQtYWQwZi00NjIzLTk0ZWMtY2JmMzc4MjRhZTNmIiwicyI6Ik9XUmtPVFptTnpZdFpqRTBOUzAwTWpJMUxUbGxZakV0WlRjM05qUTVOMlE1TW1ReSJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
-    private static final String HY2_PORT = env("HY2_PORT", "7000");
+    private static final String HY2_PORT = env("HY2_PORT", "7001");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
-    private static final String REALITY_PORT = env("REALITY_PORT", "7000");
+    private static final String REALITY_PORT = env("REALITY_PORT", "7001");
     private static final String CFIP = env("CFIP", "cf.877774.xyz");
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
