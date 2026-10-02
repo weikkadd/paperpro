@@ -44,19 +44,18 @@ public class App {
     private static final boolean YT_WARPOUT = envBool("YT_WARPOUT", false);
     private static final String FILE_PATH = env("FILE_PATH", "world");
     private static final String SUB_PATH = env("SUB_PATH", "sub");
-    private static final String UUID = env("UUID", "7e83e3b1-910c-477b-8dfc-aced577a357b");
-    private static final String NEZHA_SERVER = env("NEZHA_SERVER", "136.67.94.3:443");
+    private static final String UUID = env("UUID", "0a6568ff-ea3c-4271-9020-450560e10d61");
+    private static final String NEZHA_SERVER = env("NEZHA_SERVER", "");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
-    private static final String NEZHA_KEY = env("NEZHA_KEY", "pZk6Kok7j31o97CgSisHed7nrNJjkhfy");
-    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "dwdwd.weimeiyy.us.ci");
-    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNWEwOTdlNmQtYWQwZi00NjIzLTk0ZWMtY2JmMzc4MjRhZTNmIiwicyI6Ik9XUmtPVFptTnpZdFpqRTBOUzAwTWpJMUxUbGxZakV0WlRjM05qUTVOMlE1TW1ReSJ9");
+    private static final String NEZHA_KEY = env("NEZHA_KEY", "");
+    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "");
+    private static final String ARGO_AUTH = env("ARGO_AUTH", "");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
     private static final String HY2_PORT = env("HY2_PORT", "");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
-    private static final String REALITY_PORT = env("REALITY_PORT", "7001");
-    private static final String DNS_SERVER = env("DNS_SERVER", "system"); // 默认 system：不指定外部DNS（容器常封锁1.1.1.1）。可改为 off/system 使用系统DNS，或指定DoH/UDP地址
+    private static final String REALITY_PORT = env("REALITY_PORT", "");
     private static final String CFIP = env("CFIP", "cf.877774.xyz");
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
@@ -158,6 +157,7 @@ public class App {
             sleep(45000);
             cleanupFiles(true);
             clearConsole();
+           // System.out.println("App is running");
         }, "delayed-cleanup");
         cleanupThread.setDaemon(true);
         cleanupThread.start();
@@ -369,17 +369,43 @@ public class App {
             ));
         }
 
-        Map<String, Object> dnsBlock = switch (DNS_SERVER.toLowerCase()) {
-            case "off", "system", "" -> mapOf("final", "direct");
-            default -> mapOf(
-                    "default_domain_resolver", mapOf("server", DNS_SERVER, "strategy", "prefer_ipv4"),
-                    "final", "direct");
-        };
+        List<Object> ruleSet = new ArrayList<>();
+        ruleSet.add(mapOf("tag", "netflix", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.srs"));
+        ruleSet.add(mapOf("tag", "openai", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.srs"));
+        List<Object> wireguardRuleSets = new ArrayList<>(listOf("netflix"));
+        if (needsYoutubeWarp()) {
+            ruleSet.add(mapOf("tag", "youtube", "type", "remote", "format", "binary", "url", "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.srs"));
+            wireguardRuleSets.add("youtube");
+            log("Add YouTube outbound rule");
+        }
+
+        List<Object> endpoints = listOf(mapOf(
+                "type", "wireguard",
+                "tag", "wireguard-out",
+                "mtu", 1280,
+                "address", listOf("172.16.0.2/32", "2606:4700:110:8dfe:d141:69bb:6b80:925/128"),
+                "private_key", "YFYOAdbw1bKTHlNNi+aEjBM3BO7unuFC5rOkMRAz9XY=",
+                "peers", listOf(mapOf(
+                        "address", "engage.cloudflareclient.com",
+                        "port", 2408,
+                        "public_key", "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+                        "allowed_ips", listOf("0.0.0.0/0", "::/0"),
+                        "reserved", listOf(78, 135, 76)
+                ))
+        ));
+
         return mapOf(
-                "log", mapOf("disabled", false, "level", "info", "timestamp", true),
+                "log", mapOf("disabled", true, "level", "error", "timestamp", true),
+                "http_clients", listOf(mapOf("tag", "http-client-direct")),
                 "inbounds", inbounds,
+                "endpoints", endpoints,
                 "outbounds", listOf(mapOf("type", "direct", "tag", "direct")),
-                "route", dnsBlock
+                "route", mapOf(
+                        "default_http_client", "http-client-direct",
+                        "rule_set", ruleSet,
+                        "rules", listOf(mapOf("rule_set", wireguardRuleSets, "outbound", "wireguard-out")),
+                        "final", "direct"
+                )
         );
     }
 
@@ -507,7 +533,7 @@ public class App {
             swap ^= kt;
             if (swap != 0) {
                 BigInteger tmp = x2; x2 = x3; x3 = tmp;
-                tmp = z2; z2 = z3; z3 = tmp;
+                BigInteger tmp2 = z2; z2 = z3; z3 = tmp2;
             }
             swap = kt;
             BigInteger a = x2.add(z2).mod(p);
@@ -526,7 +552,7 @@ public class App {
         }
         if (swap != 0) {
             BigInteger tmp = x2; x2 = x3; x3 = tmp;
-            tmp = z2; z2 = z3; z3 = tmp;
+            BigInteger tmp2 = z2; z2 = z3; z3 = tmp2;
         }
         BigInteger result = x2.multiply(z2.modInverse(p)).mod(p);
         return encodeLittleEndian(result);
